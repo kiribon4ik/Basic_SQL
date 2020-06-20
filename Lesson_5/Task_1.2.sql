@@ -7,34 +7,32 @@ CREATE TABLE users (
 	updated_at VARCHAR(255)
 ) COMMENT = 'Пользователи';
 
-INSERT INTO users(name, created_at, updated_at) VALUES
+INSERT INTO 
+	users(name, created_at, updated_at)
+VALUES
     ('Kirill', '20.10.2017 8:10', '20.10.2017 8:10'),
     ('Max', '20.10.2017 8:10', '20.10.2017 8:10'),
     ('Tommy', '20.10.2017 8:10', '20.10.2017 8:10'),
     ('Ivan', '20.10.2017 8:10', '20.10.2017 8:10'),
     ('Mary', '20.10.2017 8:10', '20.10.2017 8:10');
-   
-DROP TABLE IF EXISTS dates;
-CREATE TEMPORARY TABLE dates (
-	id SERIAL PRIMARY KEY,
-	name VARCHAR(255),
+
+UPDATE 
+	users 
+SET 
+	created_at = STR_TO_DATE(created_at, '%d.%m.%Y %H:%i'),
+	updated_at = STR_TO_DATE(updated_at, '%d.%m.%Y %H:%i');
+
+ALTER TABLE 
+	users 
+MODIFY
 	created_at DATETIME,
-	updated_at DATETIME
-);
+MODIFY
+	updated_at DATETIME;
 
-INSERT INTO dates(name, created_at, updated_at) 
-	SELECT 
-		name, 
-		STR_TO_DATE(created_at, '%d.%m.%Y %H:%i'),
-		STR_TO_DATE(updated_at, '%d.%m.%Y %H:%i')
-	FROM users WHERE id >= 1;
+DESC
+	users;
 
-TRUNCATE TABLE users;
-
-ALTER TABLE users 
-	MODIFY created_at DATETIME,
-	MODIFY updated_at DATETIME;
-
-INSERT INTO users SELECT * FROM dates where id >= 1;
-
-SELECT * FROM users;
+SELECT
+	*
+FROM
+	users;
