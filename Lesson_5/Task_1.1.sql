@@ -7,7 +7,9 @@ CREATE TABLE users (
   updated_at datetime
 ) COMMENT = 'Пользователи';
 
-INSERT INTO users (name) VALUES
+INSERT INTO
+	users(name)
+VALUES
     ('Kirill'),
     ('Max'),
     ('Tommy'),
@@ -16,7 +18,9 @@ INSERT INTO users (name) VALUES
 
 UPDATE users SET 
     created_at = CURRENT_TIMESTAMP, 
-    updated_at = CURRENT_TIMESTAMP  
-    WHERE id >= 1;
+    updated_at = CURRENT_TIMESTAMP;
 
-SELECT * FROM users;
+SELECT
+	*
+FROM 
+	users;
