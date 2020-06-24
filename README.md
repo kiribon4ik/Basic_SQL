@@ -1,4 +1,10 @@
 # Basic_SQL
+Lesson 6 commit description
+
+Were added new files Task_3.sql, Task_4.sql and Task_5.sql
+
+
+---------------------------------------------------------------------
 Lesson 5 commit description.
 
 The file Task_1.1.sql was modified. Was deleted string WHERE id >= 1.
