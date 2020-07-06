@@ -2,16 +2,15 @@
 --    Переместите запись id = 1 из таблицы shop.users в таблицу sample.users. Используйте транзакции.
 
 SELECT * FROM shop.users;
+SELECT * FROM sample.users; 
 
 START TRANSACTION;
 
-DROP TABLE IF EXISTS sample.users;
 
-CREATE TABLE sample.users 
+INSERT INTO sample.users
   SELECT * 
   FROM shop.users
   WHERE id = 1;
-
-SELECT * FROM sample.users;
-
+DELETE FROM shop.users
+  WHERE id = 1;
 COMMIT;

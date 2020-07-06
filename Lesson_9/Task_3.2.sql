@@ -10,11 +10,9 @@ DROP TRIGGER IF EXISTS check_products_insert//
 CREATE TRIGGER check_products_insert BEFORE INSERT ON products
 FOR EACH ROW
 BEGIN
-  DECLARE descr_prod VARCHAR(255) DEFAULT 'Описание товара';
-  DECLARE name_prod VARCHAR(255) DEFAULT 'Нименование товара';
- 
-  SET NEW.description = COALESCE(NEW.description, descr_prod);
-  SET NEW.name = COALESCE(NEW.name, name_prod);
+  IF NEW.name IS NULL AND NEW.description IS NULL THEN
+    SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Значения NULL не могут быть присвоены. Оперция отменена!';
+  END IF;
 END//
 
 
@@ -23,7 +21,7 @@ DROP TRIGGER IF EXISTS check_products_update//
 CREATE TRIGGER check_products_update BEFORE UPDATE ON products
 FOR EACH ROW
 BEGIN
-  IF NEW.name IS NULL OR NEW.description IS NULL THEN
+  IF NEW.name IS NULL AND NEW.description IS NULL THEN
     SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Значения NULL не могут быть присвоены. Оперция отменена!';
   END IF;
 END//
