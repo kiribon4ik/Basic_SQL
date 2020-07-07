@@ -12,13 +12,15 @@ SELECT COUNT(*) FROM likes
 
 -- Запрос с помощью JOIN. 
 
--- Вижу, что всего два лайка получли 10 самых молодых пользователей, а вывести суммой не могу сообразить как
+-- Для подсчета суммы обурнул внешним запросом 
 
-SELECT
-  birthday , likes.target_id , profiles.user_id, likes.target_type_id 
-FROM profiles
-  LEFT JOIN likes 
-    ON profiles.user_id = likes.target_id AND likes.target_type_id = 2
-ORDER BY birthday
-DESC LIMIT 10;
-
+SELECT SUM(likes_all) AS total_likes 
+FROM (
+  SELECT
+    COUNT(likes.id) AS likes_all 
+  FROM profiles
+    LEFT JOIN likes 
+      ON profiles.user_id = likes.target_id AND likes.target_type_id = 2
+  GROUP BY profiles.user_id 
+  ORDER BY birthday
+  DESC LIMIT 10) AS sorted_profiles;
