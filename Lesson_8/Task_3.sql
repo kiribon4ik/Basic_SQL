@@ -17,14 +17,17 @@ SELECT
 SELECT * from media;
 
 SELECT 
-  CONCAT(users.first_name, ' ', users.last_name) AS name, COUNT(*) as total
+  CONCAT(users.first_name, ' ', users.last_name) AS name, 
+  COUNT(messages.id) +
+  COUNT(media.id) + 
+  COUNT(likes.id) AS overall_activity
 FROM users
-  JOIN messages
+  LEFT JOIN messages
     ON messages.from_user_id = users.id
-  JOIN media 
+  LEFT JOIN media 
     ON media.user_id = users.id
-  JOIN likes 
+  LEFT JOIN likes 
     ON likes.user_id = users.id    
-GROUP by name
-ORDER by total
+GROUP by users.id 
+ORDER by overall_activity
 LIMIT 10;
