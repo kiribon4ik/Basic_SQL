@@ -164,11 +164,16 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `grades_validation` BEFORE INSERT ON `grades` FOR EACH ROW BEGIN
-  IF !is_row_exists(NEW.target_id, NEW.target_type_id) THEN
-    SIGNAL SQLSTATE "45000"
-    SET MESSAGE_TEXT = "Error adding grades! Target table doesn't contain row id provided!";
-  END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `grades_validation` BEFORE INSERT ON `grades` FOR EACH ROW BEGIN
+
+  IF !is_row_exists(NEW.target_id, NEW.target_type_id) THEN
+
+    SIGNAL SQLSTATE "45000"
+
+    SET MESSAGE_TEXT = "Error adding grades! Target table doesn't contain row id provided!";
+
+  END IF;
+
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -281,7 +286,12 @@ CREATE TABLE `profiles` (
   `status_id` int unsigned DEFAULT NULL COMMENT 'Статус пользователя',
   `created_at` datetime DEFAULT CURRENT_TIMESTAMP COMMENT 'Время создания строки',
   `updated_at` datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Время обновления строки',
-  PRIMARY KEY (`user_id`)
+  PRIMARY KEY (`user_id`),
+  KEY `profiles_photo_id_fk` (`photo_id`),
+  KEY `profiles_status_id_fk` (`status_id`),
+  CONSTRAINT `profiles_photo_id_fk` FOREIGN KEY (`photo_id`) REFERENCES `contents` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `profiles_status_id_fk` FOREIGN KEY (`status_id`) REFERENCES `user_statuses` (`id`) ON DELETE SET NULL,
+  CONSTRAINT `profiles_user_id_fk` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci COMMENT='Профили';
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -460,11 +470,16 @@ UNLOCK TABLES;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `validate_first_name_last_name_insert` BEFORE INSERT ON `users` FOR EACH ROW BEGIN
-  IF NEW.first_name IS NULL AND NEW.last_name IS NULL THEN
-    SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'First_name and last_name are NULL';
-  END IF;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `validate_first_name_last_name_insert` BEFORE INSERT ON `users` FOR EACH ROW BEGIN
+
+  IF NEW.first_name IS NULL AND NEW.last_name IS NULL THEN
+
+    SIGNAL SQLSTATE '45000'
+
+    SET MESSAGE_TEXT = 'First_name and last_name are NULL';
+
+  END IF;
+
 END */;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -487,20 +502,34 @@ DELIMITER ;
 DELIMITER ;;
 CREATE DEFINER=`root`@`localhost` FUNCTION `is_row_exists`(target_id INT, target_type_id INT) RETURNS tinyint(1)
     READS SQL DATA
-BEGIN
-  DECLARE table_name VARCHAR(50);
-  SELECT name FROM target_types WHERE id = target_type_id INTO table_name;
-  
-  CASE table_name
-    WHEN 'courses' THEN
-      RETURN EXISTS(SELECT 1 FROM courses WHERE id = target_id);
-    WHEN 'users' THEN 
-      RETURN EXISTS(SELECT 1 FROM users WHERE id = target_id);
-    WHEN 'posts' THEN
-      RETURN EXISTS(SELECT 1 FROM posts WHERE id = target_id);
-    ELSE 
-      RETURN FALSE;
-  END CASE;
+BEGIN
+
+  DECLARE table_name VARCHAR(50);
+
+  SELECT name FROM target_types WHERE id = target_type_id INTO table_name;
+
+  
+
+  CASE table_name
+
+    WHEN 'courses' THEN
+
+      RETURN EXISTS(SELECT 1 FROM courses WHERE id = target_id);
+
+    WHEN 'users' THEN 
+
+      RETURN EXISTS(SELECT 1 FROM users WHERE id = target_id);
+
+    WHEN 'posts' THEN
+
+      RETURN EXISTS(SELECT 1 FROM posts WHERE id = target_id);
+
+    ELSE 
+
+      RETURN FALSE;
+
+  END CASE;
+
 END ;;
 DELIMITER ;
 /*!50003 SET sql_mode              = @saved_sql_mode */ ;
@@ -571,4 +600,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2020-07-15 21:28:46
+-- Dump completed on 2020-07-17 14:51:46

@@ -9,8 +9,9 @@ CREATE OR REPLACE VIEW post_users AS
 SELECT 
   CONCAT(users.first_name, ' ', users.last_name) AS author, 
   posts.head AS post_head
-  FROM users, posts 
-WHERE users.id = posts.user_id;
+  FROM users
+    JOIN posts
+      ON users.id = posts.user_id;
 
 SELECT * from post_users;
 
@@ -23,11 +24,13 @@ SELECT
   TIMESTAMPDIFF(YEAR, profiles.birthday, NOW()) AS age,
   profiles.gender,
   TIMESTAMPDIFF(YEAR, profiles.created_at, NOW()) AS how_long
-FROM users, profiles
-WHERE users.id = profiles.user_id
+FROM users
+  JOIN profiles 
+    ON users.id = profiles.user_id
 ORDER BY how_long DESC;
 
-SELECT * from full_users_study_group;
+SELECT * FROM full_users_study_group;
+SELECT * FROM study_groups_users;
 
 
 -- Создадим представление, которое выводит имена студентов и соответствующие для них названия учебных групп
@@ -39,7 +42,7 @@ CREATE OR REPLACE VIEW user_study_group AS
   FROM users
     JOIN study_groups_users 
         ON users.id = study_groups_users.user_id
-    JOIN study_groups 
+    LEFT JOIN study_groups 
         ON study_groups.id = study_groups_users.study_group_id
   ORDER BY group_name;
 
